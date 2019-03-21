@@ -1,6 +1,7 @@
 import requests
 import math
 import json
+import time
 
 website_url = 'https://github.red'
 
@@ -44,14 +45,13 @@ def CalculateWord():
     return wordsCount
 
 def GetFirstPost():
-    req = requests.get('https://github.red/wp-json/wp/v2/posts?context=view&per_page=1&page=1&order=asc')
-    req = json.loads(req.text)
+    req = requests.get(website_url + '/wp-json/wp/v2/posts?context=view&per_page=1&page=1&order=asc')
+    content = json.loads(req.text)
 
-    return [req[0]['date'], req[0]['title']['rendered']]
+    return [time.localtime(math.ceil(time.mktime(time.strptime(content[0]['date'], "%Y-%m-%dT%H:%M:%S")))), content[0]['title']['rendered']]
 
 allWord = str(CalculateWord())
 allPost = str(GetPostTotal())
-print("")
-print(website_url)
-print()
-print("总共 " +  +" 篇文章，共 "+ str() + " 字。")
+print("\n" + website_url)
+print("第一篇文章发表于" + str(time.strftime("%Y年%m月%d日", GetFirstPost()[0])) + "。")
+print("总共 " + allPost +" 篇文章，共 "+ allWord + " 字。")
