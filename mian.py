@@ -19,6 +19,10 @@ def CalChineseWord(str):
 
     return count
 
+
+def FormatTime(timeStr):
+    return str(time.strftime("%Y年%m月%d日", time.localtime(math.ceil(time.mktime(time.strptime(timeStr, "%Y-%m-%dT%H:%M:%S"))))))
+
 def CalculateWord():
     perPage = 50
     postTotal = GetPostTotal()
@@ -38,11 +42,12 @@ def CalculateWord():
             content = postData[nowPost]['content']['rendered']
             count = CalChineseWord(content)
 
-            print(title + "（" + str(count) + "字）")
+            print(title + "（" + str(count) + "字） " + FormatTime(postData[nowPost]['date']))
 
             wordsCount += count
 
     return wordsCount
+
 
 def GetFirstPost():
     req = requests.get(website_url + '/wp-json/wp/v2/posts?context=view&per_page=1&page=1&order=asc')
@@ -54,4 +59,4 @@ allWord = str(CalculateWord())
 allPost = str(GetPostTotal())
 print("\n" + website_url)
 print("第一篇文章发表于" + str(time.strftime("%Y年%m月%d日", GetFirstPost()[0])) + "。")
-print("总共 " + allPost +" 篇文章，共 "+ allWord + " 字。")
+print("总共 " + allPost +" 篇文章，共 "+ allWord + " 个中文字符。")
